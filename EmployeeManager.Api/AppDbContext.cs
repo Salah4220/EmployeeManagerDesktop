@@ -10,5 +10,8 @@ namespace EmployeeManager.Api
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public Microsoft.EntityFrameworkCore.DbSet<Employee> Employees { get; set; }
+        public Microsoft.EntityFrameworkCore.DbSet<User> Users { get; set; }
+
+
     }
 }
