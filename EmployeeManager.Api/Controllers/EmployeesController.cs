@@ -1,4 +1,5 @@
 ﻿using EmployeeManager.Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,7 @@ namespace EmployeeManager.Api.Controllers
         }
 
         // GET: api/employees
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

@@ -1,22 +1,28 @@
 ﻿using EmployeeManager.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace EmployeeManager.Api.Controllers
 {
-   
+  
     [ApiController]
     [Route("api/users")] // ✅ route explicite, plus de problème de casse
     public class UserController : ControllerBase
     {
-
-        private Util _util = new Util();
-        private readonly AppDbContext _context;
-        public UserController(AppDbContext context)
+        private readonly IConfiguration _configuration;
+        public UserController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
+        private Util _util = new Util();
+        private readonly AppDbContext _context;
+        
 
 
 
@@ -74,8 +80,30 @@ namespace EmployeeManager.Api.Controllers
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PassWordHash))
                 return BadRequest("Wrong username or password.");
 
-            // ⚠️ Ici, on ne retourne pas encore le JWT (prochaine étape)
-            return Ok(new { message = "Login successful", userId = user.Id });
+            // Lire la config
+            var jwtSettings = _configuration.GetSection("Jwt");
+            var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
+
+            var claims = new[]
+            {
+        new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        new Claim("userId", user.Id.ToString())
+    };
+
+            var creds = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: jwtSettings["Issuer"],
+                audience: jwtSettings["Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["ExpireMinutes"])),
+                signingCredentials: creds
+            );
+
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return Ok(new { token = tokenString });
         }
     }
 }
