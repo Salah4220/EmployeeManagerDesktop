@@ -43,7 +43,7 @@ namespace EmployeeManager.Desktop.ViewModels
             try
             {
                 // Exemple : remplacer par l’URL réelle de ton API
-                var response = await client.PostAsync("https://exemple.com/api/login", content);
+                var response = await client.PostAsync("http://localhost:5269/api/users/login", content);
 
                 if (response.IsSuccessStatusCode)
                 {

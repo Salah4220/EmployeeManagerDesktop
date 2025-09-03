@@ -78,7 +78,17 @@ namespace EmployeeManager.Api.Controllers
 
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PassWordHash))
-                return BadRequest("Wrong username or password.");
+            {
+                var result2 = new LoginResult
+                {
+                    Success = false,
+                    Message = "Connexion échoué",
+                    Token = null
+                };
+
+                return (IActionResult)result2;
+            }
+               
 
             // Lire la config
             var jwtSettings = _configuration.GetSection("Jwt");
@@ -103,7 +113,14 @@ namespace EmployeeManager.Api.Controllers
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-            return Ok(new { token = tokenString });
+            var result = new LoginResult
+            {
+                Success = true,                    
+                Message = "Connexion réussie",     
+                Token = tokenString
+            };
+
+            return Ok(result);
         }
     }
 }
