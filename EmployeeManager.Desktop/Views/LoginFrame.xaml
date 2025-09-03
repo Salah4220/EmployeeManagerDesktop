@@ -27,6 +27,6 @@
                 Grid.Row="4"
                 Height="35" Margin="0,80,0,0"/>
 
-        <TextBlock Text="{Binding StatusMessage}" Grid.Row="3" Margin="0,67,0,-57" Foreground="DarkRed"/>
+        <TextBlock Text="{Binding StatusMessage}" Grid.Row="5" Margin="10,138,19,-58"  />
     </Grid>
 </Window>

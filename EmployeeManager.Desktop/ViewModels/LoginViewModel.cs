@@ -2,16 +2,13 @@
 using CommunityToolkit.Mvvm.Input;
 using EmployeeManager.Desktop.Models;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace EmployeeManager.Desktop.ViewModels
 {
-    public partial class LoginViewModel :  ObservableObject
+    public partial class LoginViewModel : ObservableObject
     {
         [ObservableProperty]
         private string username;
@@ -27,8 +24,9 @@ namespace EmployeeManager.Desktop.ViewModels
 
         public LoginViewModel()
         {
-            username = "";
-            Password = "";
+            Username = string.Empty;
+            Password = string.Empty;
+            StatusMessage = string.Empty;
         }
 
         [RelayCommand]
@@ -38,13 +36,13 @@ namespace EmployeeManager.Desktop.ViewModels
             StatusMessage = "Connexion en cours...";
 
             using var client = new HttpClient();
-            var data = new { username, Password };
+            var data = new { Username, Password }; // ⚠️ utiliser les propriétés, pas les champs privés
             var json = JsonConvert.SerializeObject(data);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             try
             {
-                // Exemple : remplacer par l'URL réelle de ton API
+                // Exemple : remplacer par l’URL réelle de ton API
                 var response = await client.PostAsync("https://exemple.com/api/login", content);
 
                 if (response.IsSuccessStatusCode)
@@ -70,7 +68,6 @@ namespace EmployeeManager.Desktop.ViewModels
             {
                 IsLoading = false;
             }
-
         }
     }
 }
