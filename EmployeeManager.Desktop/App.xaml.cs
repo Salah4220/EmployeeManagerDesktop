@@ -1,4 +1,5 @@
 ﻿using EmployeeManager.Desktop.ViewModels;
+using EmployeeManager.Desktop.Views;
 using System.Configuration;
 using System.Data;
 using System.Windows;
@@ -13,9 +14,10 @@ namespace EmployeeManager.Desktop
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            var loginView = new LoginFrame();
-            loginView.Show();
-
+         /*   var loginView = new LoginFrame();
+            loginView.Show();*/
+        var signInView = new SignInFrame();
+            signInView.Show();
         }
 
     }

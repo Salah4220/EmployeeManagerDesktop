@@ -2,13 +2,17 @@
 using CommunityToolkit.Mvvm.Input;
 using EmployeeManager.Desktop.Models;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace EmployeeManager.Desktop.ViewModels
 {
-    public partial class LoginViewModel : ObservableObject
+    public partial class SignInViewModel : ObservableObject
+   
     {
         [ObservableProperty]
         private string username;
@@ -17,56 +21,48 @@ namespace EmployeeManager.Desktop.ViewModels
         private string password;
 
         [ObservableProperty]
-        private bool isLoading;
-
-        [ObservableProperty]
         private string statusMessage;
 
-        public LoginViewModel()
+
+        public SignInViewModel()
         {
             Username = string.Empty;
             Password = string.Empty;
             StatusMessage = string.Empty;
+
         }
 
         [RelayCommand]
-        private async Task LoginAsync()
+        private async Task SignInAsync()
         {
-            IsLoading = true;
-            StatusMessage = "Connexion en cours...";
-
             using var client = new HttpClient();
-            var data = new { Username, Password }; 
+            var data = new { Username, Password };
             var json = JsonConvert.SerializeObject(data);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-
             try
             {
-             
-                var response = await client.PostAsync("http://localhost:5269/api/users/login", content);
-
+                var response = await client.PostAsync("http://localhost:5269/api/users/register", content);
                 if (response.IsSuccessStatusCode)
                 {
                     var resultJson = await response.Content.ReadAsStringAsync();
-                    var result = JsonConvert.DeserializeObject<LoginResult>(resultJson);
-
+                    var result = JsonConvert.DeserializeObject<SignInResult>(resultJson);
                     if (result != null && result.Success)
-                        StatusMessage = "Connexion réussie ✅";
+                    {
+                        StatusMessage ="Inscription réussie ✅";
+                    }
                     else
+                    {
                         StatusMessage = result?.Message ?? "Identifiants incorrects";
+                    }
                 }
                 else
                 {
                     StatusMessage = $"Erreur serveur : {response.StatusCode}";
                 }
             }
-            catch (HttpRequestException ex)
+            catch (Exception ex)
             {
-                StatusMessage = $"Erreur réseau : {ex.Message}";
-            }
-            finally
-            {
-                IsLoading = false;
+                StatusMessage = $"Erreur serveur : {ex.Message}";
             }
         }
     }

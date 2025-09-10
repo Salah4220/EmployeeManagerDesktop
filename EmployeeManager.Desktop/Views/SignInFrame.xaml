@@ -1,0 +1,34 @@
+﻿<Window x:Class="EmployeeManager.Desktop.Views.SignInFrame"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EmployeeManager.Desktop.Views"
+        mc:Ignorable="d"
+        Title="SignInFrame" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Nom d'utilisateur" Grid.Row="0" Margin="10,0,-10,405"/>
+        <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="10,50,-10,355"/>
+
+        <TextBlock Text="Mot de passe" Margin="10,104,47,301"/>
+        <PasswordBox x:Name="PasswordBox" Margin="10,138,-10,264"  
+                      PasswordChanged="PasswordBox_PasswordChanged"/>
+        <TextBlock Text="confirmer Mot de passe" Margin="10,217,47,188"/>
+        <PasswordBox x:Name="PasswordBox2" Margin="10,285,-10,117"/>
+
+        <Button Content="Se connecter"
+              Command="{Binding SignInCommand}"
+              Height="35" Margin="0,336,0,33"/>
+        <TextBlock Text="{Binding StatusMessage}" Grid.Row="7" Margin="10,300,19,-58"  />
+
+    </Grid>
+</Window>
