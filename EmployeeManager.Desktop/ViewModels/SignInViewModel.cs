@@ -23,11 +23,14 @@ namespace EmployeeManager.Desktop.ViewModels
         [ObservableProperty]
         private string statusMessage;
 
+        [ObservableProperty]
+        private string confirmPassword;
 
         public SignInViewModel()
         {
             Username = string.Empty;
             Password = string.Empty;
+            ConfirmPassword = string.Empty;
             StatusMessage = string.Empty;
 
         }
@@ -35,6 +38,11 @@ namespace EmployeeManager.Desktop.ViewModels
         [RelayCommand]
         private async Task SignInAsync()
         {
+            if (Password != ConfirmPassword)
+            {
+                StatusMessage = "Les mots de passe ne correspondent pas";
+                return;
+            }
             using var client = new HttpClient();
             var data = new { Username, Password };
             var json = JsonConvert.SerializeObject(data);
@@ -57,7 +65,9 @@ namespace EmployeeManager.Desktop.ViewModels
                 }
                 else
                 {
-                    StatusMessage = $"Erreur serveur : {response.StatusCode}";
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    
+                    StatusMessage = errorContent;
                 }
             }
             catch (Exception ex)

@@ -31,5 +31,10 @@ namespace EmployeeManager.Desktop.Views
             if (DataContext is SignInViewModel vm)
                 vm.Password = PasswordBox.Password;
         }
+        private void ConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is SignInViewModel vm)
+                vm.ConfirmPassword = ConfirmPasswordBox.Password;
+        }
     }
 }
