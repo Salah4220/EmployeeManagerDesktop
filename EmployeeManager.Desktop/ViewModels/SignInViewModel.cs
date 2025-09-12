@@ -24,6 +24,9 @@ namespace EmployeeManager.Desktop.ViewModels
         [ObservableProperty]
         private string confirmPassword;
 
+        [ObservableProperty]
+        private string role;
+
         private readonly IMessageService _messageService;
 
         public SignInViewModel(IMessageService messageService)
@@ -31,6 +34,7 @@ namespace EmployeeManager.Desktop.ViewModels
             Username = string.Empty;
             Password = string.Empty;
             ConfirmPassword = string.Empty;
+            role =string.Empty;
             _messageService = messageService;
           
 
@@ -45,7 +49,7 @@ namespace EmployeeManager.Desktop.ViewModels
                 return;
             }
             using var client = new HttpClient();
-            var data = new { Username, Password };
+            var data = new { Username, Password,Role };
             var json = JsonConvert.SerializeObject(data);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             try

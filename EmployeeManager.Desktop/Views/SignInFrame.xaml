@@ -26,9 +26,14 @@
         <PasswordBox x:Name="ConfirmPasswordBox" Margin="10,285,-10,117"
                       PasswordChanged="ConfirmPasswordBox_PasswordChanged"/>
 
+        <ComboBox  Text="{Binding Role, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="53,360,0,0" VerticalAlignment="Top" Width="174" Height="53">
+            <ComboBoxItem Content="admin"/>
+            <ComboBoxItem Content="user"/>
+        </ComboBox>
+
         <Button Content="Sign In"
               Command="{Binding SignInCommand}"
-              Height="35" Margin="0,336,0,33"/>
+              Height="35" Margin="10,52,-10,-87" Grid.Row="6"/>
         
     </Grid>
 </Window>

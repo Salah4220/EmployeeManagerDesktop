@@ -53,7 +53,7 @@ namespace EmployeeManager.Desktop.ViewModels
                     if (result != null && result.Success)
                     {
                         _messageService.ShowMessage("Connexion réussie ✅", "Succès");
-                        var role = DecodeTokenRole(result.Token);
+                        result.Role= DecodeTokenRole(result.Token);
                      }
                         
 
