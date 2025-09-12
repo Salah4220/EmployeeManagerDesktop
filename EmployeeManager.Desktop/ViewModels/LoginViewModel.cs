@@ -3,7 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using EmployeeManager.Desktop.Models;
 using EmployeeManager.Shared.Interfaces;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -49,8 +51,13 @@ namespace EmployeeManager.Desktop.ViewModels
                     var result = JsonConvert.DeserializeObject<LoginResult>(resultJson);
 
                     if (result != null && result.Success)
+                    {
                         _messageService.ShowMessage("Connexion réussie ✅", "Succès");
-                
+                        var role = DecodeTokenRole(result.Token);
+                     }
+                        
+
+
                     else
                         _messageService.ShowMessage(result?.Message ?? "Identifiants incorrects", "Erreur");
 
@@ -68,6 +75,26 @@ namespace EmployeeManager.Desktop.ViewModels
             finally
             {
               
+            }
+        }
+
+
+        private string DecodeTokenRole(string token)
+        {
+            try
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+              
+                var roleClaim = jwtToken.Claims
+                    .FirstOrDefault(c => c.Type == ClaimTypes.Role || c.Type == "role");
+
+                return roleClaim?.Value;
+            }
+            catch
+            {
+                return null;
             }
         }
     }

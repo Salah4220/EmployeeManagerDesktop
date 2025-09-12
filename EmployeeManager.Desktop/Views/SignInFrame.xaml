@@ -26,7 +26,7 @@
         <PasswordBox x:Name="ConfirmPasswordBox" Margin="10,285,-10,117"
                       PasswordChanged="ConfirmPasswordBox_PasswordChanged"/>
 
-        <Button Content="Se connecter"
+        <Button Content="Sign In"
               Command="{Binding SignInCommand}"
               Height="35" Margin="0,336,0,33"/>
         

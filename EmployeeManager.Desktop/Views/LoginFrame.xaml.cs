@@ -29,7 +29,7 @@ namespace EmployeeManager.Desktop
         {
             InitializeComponent();
             //DataContext = new SignInViewModel();
-            DataContext = new SignInViewModel(new MessageService());
+            DataContext = new LoginViewModel(new MessageService());
         }
 
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
