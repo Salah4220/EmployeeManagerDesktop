@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EmployeeManager.Desktop.Models;
+using EmployeeManager.Shared.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -21,17 +22,17 @@ namespace EmployeeManager.Desktop.ViewModels
         private string password;
 
         [ObservableProperty]
-        private string statusMessage;
-
-        [ObservableProperty]
         private string confirmPassword;
 
-        public SignInViewModel()
+        private readonly IMessageService _messageService;
+
+        public SignInViewModel(IMessageService messageService)
         {
             Username = string.Empty;
             Password = string.Empty;
             ConfirmPassword = string.Empty;
-            StatusMessage = string.Empty;
+            _messageService = messageService;
+          
 
         }
 
@@ -40,7 +41,7 @@ namespace EmployeeManager.Desktop.ViewModels
         {
             if (Password != ConfirmPassword)
             {
-                StatusMessage = "Les mots de passe ne correspondent pas";
+                _messageService.ShowMessage("❌ Les mots de passe ne correspondent pas.", "Erreur");
                 return;
             }
             using var client = new HttpClient();
@@ -56,23 +57,26 @@ namespace EmployeeManager.Desktop.ViewModels
                     var result = JsonConvert.DeserializeObject<SignInResult>(resultJson);
                     if (result != null && result.Success)
                     {
-                        StatusMessage ="Inscription réussie ✅";
+                        _messageService.ShowMessage("✅ Inscription réussie", "Succès");
                     }
                     else
                     {
-                        StatusMessage = result?.Message ?? "Identifiants incorrects";
+                        _messageService.ShowMessage(result?.Message ?? "Identifiants incorrects", "Erreur");
+                        
                     }
                 }
                 else
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
-                    
-                    StatusMessage = errorContent;
+
+                    _messageService.ShowMessage(errorContent, "Erreur");
+
+                   
                 }
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Erreur serveur : {ex.Message}";
+                _messageService.ShowMessage($"Erreur serveur : {ex.Message}", "Erreur");
             }
         }
     }

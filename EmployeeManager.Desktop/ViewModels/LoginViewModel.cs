@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EmployeeManager.Desktop.Models;
+using EmployeeManager.Shared.Interfaces;
 using Newtonsoft.Json;
 using System.Net.Http;
 using System.Text;
@@ -16,24 +17,21 @@ namespace EmployeeManager.Desktop.ViewModels
         [ObservableProperty]
         private string password;
 
-        [ObservableProperty]
-        private bool isLoading;
+        private readonly IMessageService _messageService;
 
-        [ObservableProperty]
-        private string statusMessage;
 
-        public LoginViewModel()
+
+        public LoginViewModel(IMessageService messageService)
         {
             Username = string.Empty;
             Password = string.Empty;
-            StatusMessage = string.Empty;
+            _messageService = messageService;
         }
 
         [RelayCommand]
         private async Task LoginAsync()
         {
-            IsLoading = true;
-            StatusMessage = "Connexion en cours...";
+            
 
             using var client = new HttpClient();
             var data = new { Username, Password }; 
@@ -51,22 +49,25 @@ namespace EmployeeManager.Desktop.ViewModels
                     var result = JsonConvert.DeserializeObject<LoginResult>(resultJson);
 
                     if (result != null && result.Success)
-                        StatusMessage = "Connexion réussie ✅";
+                        _messageService.ShowMessage("Connexion réussie ✅", "Succès");
+                
                     else
-                        StatusMessage = result?.Message ?? "Identifiants incorrects";
+                        _messageService.ShowMessage(result?.Message ?? "Identifiants incorrects", "Erreur");
+
                 }
                 else
                 {
-                    StatusMessage = $"Erreur serveur : {response.StatusCode}";
+                    _messageService.ShowMessage($"Erreur serveur : {response.StatusCode}", "Erreur");
+                   
                 }
             }
             catch (HttpRequestException ex)
             {
-                StatusMessage = $"Erreur réseau : {ex.Message}";
+                _messageService.ShowMessage($"Erreur serveur : {ex.Message}", "Erreur");
             }
             finally
             {
-                IsLoading = false;
+              
             }
         }
     }

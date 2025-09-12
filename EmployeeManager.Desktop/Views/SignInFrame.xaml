@@ -29,7 +29,6 @@
         <Button Content="Se connecter"
               Command="{Binding SignInCommand}"
               Height="35" Margin="0,336,0,33"/>
-        <TextBlock Text="{Binding StatusMessage}" Grid.Row="6" Margin="10,0,19,-102" Height="60" VerticalAlignment="Bottom"  />
-
+        
     </Grid>
 </Window>

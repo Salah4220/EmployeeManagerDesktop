@@ -1,4 +1,5 @@
-﻿using EmployeeManager.Desktop.ViewModels;
+﻿using EmployeeManager.Desktop.Services;
+using EmployeeManager.Desktop.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,9 @@ namespace EmployeeManager.Desktop.Views
         public SignInFrame()
         {
             InitializeComponent();
-            DataContext = new SignInViewModel();
+            //DataContext = new SignInViewModel();
+            DataContext = new SignInViewModel(new MessageService());
+
         }
 
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)

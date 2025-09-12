@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using EmployeeManager.Desktop.Services;
 using EmployeeManager.Desktop.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,8 @@ namespace EmployeeManager.Desktop
         public LoginFrame()
         {
             InitializeComponent();
-            DataContext = new LoginViewModel();
+            //DataContext = new SignInViewModel();
+            DataContext = new SignInViewModel(new MessageService());
         }
 
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
