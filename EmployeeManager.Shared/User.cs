@@ -11,6 +11,8 @@ namespace EmployeeManager.Shared
         public int Id { get; set; }
         public string UserName { get; set; }
         public string PassWordHash { get; set; }
+        public string Role { get; set; }
+        public  ICollection<Task> Tasks { get; set; } = new List<Task>();
 
     }
     public class RegisterDto
