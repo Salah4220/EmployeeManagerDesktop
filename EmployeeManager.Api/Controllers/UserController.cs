@@ -37,29 +37,36 @@ namespace EmployeeManager.Api.Controllers
         }
         // POST: api/users/register
         [HttpPost("register")]
+      
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.UserName) || string.IsNullOrWhiteSpace(dto.Password))
-                return BadRequest("Invalid user data.");
+                return BadRequest(new { Success = false, Message = "Invalid user data." });
 
-            // Vérifier si l'utilisateur existe déjà
             if (await _context.Users.AnyAsync(u => u.UserName == dto.UserName))
-                return BadRequest("Username already used.");
+                return BadRequest(new { Success = false, Message = "Username already used." });
 
-            // Hash avec BCrypt
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
             var user = new User
             {
                 UserName = dto.UserName,
-                PassWordHash = passwordHash
+                PassWordHash = passwordHash,
+                Role = dto.Role
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+            var result = new
+            {
+                Success = true,
+                Message = "Utilisateur créé avec succès"
+            };
+
+            return Ok(result);
         }
+
         // GET: api/users/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
@@ -69,18 +76,25 @@ namespace EmployeeManager.Api.Controllers
                 return NotFound();
             return Ok(user);
         }
-        
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == dto.UserName);
 
-
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PassWordHash))
-                return BadRequest("Wrong username or password.");
+            {
+                var result2 = new LoginResult
+                {
+                    Success = false,
+                    Message = "Connexion échouée ❌",
+                    Token = null
+                };
 
-            // Lire la config
+                return Unauthorized(result2);
+            }
+
+            //  Lire les paramètres JWT depuis la config
             var jwtSettings = _configuration.GetSection("Jwt");
             var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
 
@@ -88,7 +102,8 @@ namespace EmployeeManager.Api.Controllers
             {
         new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        new Claim("userId", user.Id.ToString())
+        new Claim("userId", user.Id.ToString()),
+        new Claim(ClaimTypes.Role, user.Role)
     };
 
             var creds = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
@@ -103,7 +118,15 @@ namespace EmployeeManager.Api.Controllers
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-            return Ok(new { token = tokenString });
+            var result = new LoginResult
+            {
+                Success = true,
+                Message = "Connexion réussie ✅",
+                Token = tokenString
+            };
+
+            return Ok(result);
         }
+
     }
 }
