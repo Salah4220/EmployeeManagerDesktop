@@ -11,7 +11,7 @@ namespace EmployeeManager.Api.Controllers
 {
   
     [ApiController]
-    [Route("api/users")] // ✅ route explicite, plus de problème de casse
+    [Route("api/users")] 
     public class UserController : ControllerBase
     {
         private readonly IConfiguration _configuration;
