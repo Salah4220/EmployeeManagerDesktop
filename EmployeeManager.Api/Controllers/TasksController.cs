@@ -99,5 +99,31 @@ namespace EmployeeManager.Api.Controllers
 
             return NoContent();
         }
+
+        // POST: api/tasks/{id}/assign/{userId}
+        [HttpPost("{id}/assign/{userId?}")]
+        public async Task<IActionResult> AssignTask(int id, int? userId)
+        {
+            var task = await _context.Tasks.FindAsync(id);
+            if (task == null)
+                return NotFound("Task not found");
+
+            if (userId.HasValue)
+            {
+                var user = await _context.Users.FindAsync(userId.Value);
+                if (user == null)
+                    return NotFound("User not found");
+
+                task.UserId = userId.Value;
+            }
+            else
+            {
+                task.UserId = null; 
+            }
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
     }
 }
