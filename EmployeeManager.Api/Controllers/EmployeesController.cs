@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EmployeeManager.Api.Controllers
 {
     [ApiController]
-    [Route("api/employees")] // ✅ route explicite, plus de problème de casse
+    [Route("api/employees")] 
     public class EmployeesController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -82,5 +82,7 @@ namespace EmployeeManager.Api.Controllers
 
             return NoContent();
         }
+
+
     }
 }
