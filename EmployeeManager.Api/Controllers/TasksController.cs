@@ -29,6 +29,7 @@ namespace EmployeeManager.Api.Controllers
         }
 
         // POST: api/tasks
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] TaskDto dto) // ✅ FromBody pour Swagger
         {
@@ -50,6 +51,7 @@ namespace EmployeeManager.Api.Controllers
         }
 
         // GET: api/tasks/{id}
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -61,6 +63,7 @@ namespace EmployeeManager.Api.Controllers
         }
 
         // PUT: api/tasks/{id}
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] TaskDto request)
         {
@@ -87,6 +90,7 @@ namespace EmployeeManager.Api.Controllers
         }
 
         // DELETE: api/tasks/{id}
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -101,6 +105,7 @@ namespace EmployeeManager.Api.Controllers
         }
 
         // POST: api/tasks/{id}/assign/{userId}
+        [Authorize(Roles = "admin")]
         [HttpPost("{id}/assign/{userId?}")]
         public async Task<IActionResult> AssignTask(int id, int? userId)
         {
