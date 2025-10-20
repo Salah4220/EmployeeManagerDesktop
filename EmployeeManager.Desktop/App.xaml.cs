@@ -14,10 +14,12 @@ namespace EmployeeManager.Desktop
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-          /* var loginView = new LoginFrame();
-            loginView.Show();*/
-        var signInView = new SignInFrame();
-            signInView.Show();
+              var loginView = new LoginFrame();
+               loginView.Show();/*
+           var signInView = new SignInFrame();
+               signInView.Show();*/
+
+          
         }
 
     }
