@@ -11,6 +11,7 @@ namespace EmployeeManager.Api.Controllers
     public class TasksController : ControllerBase
     {
 
+        private readonly HttpClient _client;
         public TasksController(AppDbContext context)
         {
             _context = context;
@@ -24,7 +25,18 @@ namespace EmployeeManager.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var tasks = await _context.Tasks.ToListAsync();
+            var tasks = await _context.Tasks
+         .Include(t => t.User)
+         .Select(t => new TaskDto
+         {
+             Id = t.Id,
+             Title = t.Title,
+             Description = t.Description,
+             State = t.State,
+             UserName = t.User.UserName
+         })
+         .ToListAsync();
+
             return Ok(tasks);
         }
 

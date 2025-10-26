@@ -36,10 +36,10 @@
                   CanUserAddRows="False">
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                  
                     <DataGridTextColumn Header="Titre" Binding="{Binding Title}" Width="200"/>
                     <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
-                    <DataGridTextColumn Header="UserId" Binding="{Binding UserId}" Width="100"/>
+                    <DataGridTextColumn Header="UserName" Binding="{Binding UserName}" Width="100"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
