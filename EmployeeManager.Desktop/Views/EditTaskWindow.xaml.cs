@@ -1,9 +1,12 @@
 ﻿using EmployeeManager.Desktop.Services;
 using EmployeeManager.Desktop.ViewModels;
 using EmployeeManager.Shared;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,23 +21,21 @@ using System.Windows.Shapes;
 namespace EmployeeManager.Desktop.Views
 {
     /// <summary>
-    /// Logique d'interaction pour DashboardView.xaml
+    /// Logique d'interaction pour EditTaskWindow.xaml
     /// </summary>
-    public partial class DashboardView : Window
+    public partial class EditTaskWindow : Window
     {
-        public DashboardView()
+
+        public EditTaskWindow(TaskDto task)
         {
             InitializeComponent();
-            DataContext = new DashboardViewModel(new MessageService());
+            DataContext = new EditTaskViewModel(task, new MessageService());
         }
 
-        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is DataGrid grid && grid.SelectedItem is TaskDto selectedTask)
-            {
-                var editWindow = new EditTaskWindow(selectedTask);
-                editWindow.ShowDialog();
-            }
+            this.Close();
         }
-    }
+     }
 }
