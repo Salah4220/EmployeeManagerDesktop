@@ -36,5 +36,11 @@ namespace EmployeeManager.Desktop.Views
                 editWindow.ShowDialog();
             }
         }
+
+        private void NewButton_Click(object sender, RoutedEventArgs e)
+        {
+            var newTask = new NewTaskView(new TaskDto());
+            newTask.ShowDialog();
+        }
     }
 }
