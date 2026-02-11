@@ -1,8 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EmployeeManager.Desktop.Models;
+using EmployeeManager.Desktop.Services;
+using EmployeeManager.Desktop.Views;
 using EmployeeManager.Shared.Interfaces;
 using Newtonsoft.Json;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Security.Claims;
@@ -54,7 +57,10 @@ namespace EmployeeManager.Desktop.ViewModels
                     {
                         _messageService.ShowMessage("Connexion réussie ✅", "Succès");
                         result.Role= DecodeTokenRole(result.Token);
-                     }
+                        AuthService.Token= result.Token;
+                        var dashboardview = new DashboardView();
+                        dashboardview.Show();
+                    }
                         
 
 

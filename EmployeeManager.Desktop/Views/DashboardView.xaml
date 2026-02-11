@@ -1,0 +1,79 @@
+﻿<Window x:Class="EmployeeManager.Desktop.Views.DashboardView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Dashboard Administrateur" Height="600" Width="1250">
+
+    <Grid>
+
+       
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+          
+            <RowDefinition Height="*"/>
+           
+            <RowDefinition Height="Auto"/>
+           
+        </Grid.RowDefinitions>
+
+
+        <Menu Grid.Row="0" Background="#2C3E50" Foreground="White" Height="30">
+            <MenuItem Header="🏠 Accueil"/>
+            <MenuItem Header="👤 Utilisateurs"/>
+            <MenuItem Header="📋 Tâches"/>
+            <MenuItem Header="🚪 Déconnexion"/>
+        </Menu>
+
+  
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Tasks}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  MouseDoubleClick="DataGrid_MouseDoubleClick"
+                  Margin="10"
+                  AlternatingRowBackground="#F8F8F8"
+                  BorderThickness="0"
+                  RowHeaderWidth="0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+                <DataGridTextColumn Header="Titre" Binding="{Binding Title}" Width="150"/>
+                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="250"/>
+                <DataGridTextColumn Header="State" Binding="{Binding State}" Width="100"/>
+                <DataGridTextColumn Header="Utilisateur" Binding="{Binding UserName}" Width="100"/>
+
+                <DataGridTextColumn Header="Created" Binding="{Binding Created}" Width="150"/>
+                <DataGridTextColumn Header="Updated" Binding="{Binding Updated}" Width="150"/>
+                <DataGridTextColumn Header="Effort" Binding="{Binding effortEstimation}" Width="100"/>
+                <DataGridTextColumn Header="Priorité" Binding="{Binding priority}" Width="100"/>
+                <DataGridTextColumn Header="Spent time" Binding="{Binding progress}" Width="100"/>
+
+
+            </DataGrid.Columns>
+        </DataGrid>
+
+    
+        <StackPanel Grid.Row="2" Orientation="Horizontal" 
+                    HorizontalAlignment="Right" Margin="10">
+            <Button Content="🔄 Rafraîchir"
+                    Command="{Binding LoadTasksCommand}"
+                    Width="120" Height="35"
+                    Background="#3498DB"
+                    Foreground="White"
+                    FontWeight="Bold"
+                    BorderBrush="#2980B9"
+                    BorderThickness="1"
+                    Cursor="Hand"
+                    ToolTip="Rafraîchir la liste des tâches"/>
+            <Button Content="🔄 Nouvelle"
+                    Width="120" Height="35"
+                    Background="Green"
+                    Foreground="White"
+                    FontWeight="Bold"
+                    BorderBrush="Green"
+                    BorderThickness="1"
+                    Cursor="Hand"
+                    Click="NewButton_Click"
+                    ToolTip="nouvelle tâche"/>
+        </StackPanel>
+
+    </Grid>
+</Window>

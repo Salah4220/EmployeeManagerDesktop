@@ -36,8 +36,13 @@ namespace EmployeeManager.Api
                 entity.Property(t => t.Title).IsRequired().HasMaxLength(200);
                 entity.Property(t => t.Description).HasMaxLength(1000);
                 entity.Property(t => t.State).HasMaxLength(50);
+                entity.Property(t => t.Created).HasDefaultValueSql("NOW()");
+                entity.Property(t => t.Updated).HasDefaultValueSql("NOW()");
+                entity.Property(t => t.effortEstimation);
+                entity.Property(t => t.priority);
+                entity.Property(t => t.progress);
+                entity.Property(t => t.effortEstimation);
 
-            
             });
         }
 

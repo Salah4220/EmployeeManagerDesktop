@@ -28,7 +28,6 @@ namespace EmployeeManager.Desktop
         public LoginFrame()
         {
             InitializeComponent();
-            //DataContext = new SignInViewModel();
             DataContext = new LoginViewModel(new MessageService());
         }
 

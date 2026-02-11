@@ -11,6 +11,7 @@ namespace EmployeeManager.Api.Controllers
     public class TasksController : ControllerBase
     {
 
+        private readonly HttpClient _client;
         public TasksController(AppDbContext context)
         {
             _context = context;
@@ -24,7 +25,23 @@ namespace EmployeeManager.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var tasks = await _context.Tasks.ToListAsync();
+            var tasks = await _context.Tasks
+         .Include(t => t.User)
+         .Select(t => new TaskDto
+         {
+             Id = t.Id,
+             Title = t.Title,
+             Description = t.Description,
+             State = t.State,
+             UserName = t.User.UserName,
+             Created = t.Created,
+             Updated = t.Updated,
+             effortEstimation = t.effortEstimation,
+             priority = t.priority,
+             progress = t.progress
+         })
+         .ToListAsync();
+
             return Ok(tasks);
         }
 
@@ -41,7 +58,14 @@ namespace EmployeeManager.Api.Controllers
                 Title = dto.Title,
                 Description = dto.Description,
                 State = dto.State,
-                 UserId = null
+                 UserId = null,
+                Created = DateTime.UtcNow,
+                 Updated = DateTime.UtcNow,
+                 effortEstimation = dto.effortEstimation,
+                    priority = dto.priority,
+                    progress = dto.progress
+
+
             };
 
             _context.Tasks.Add(task);
@@ -77,6 +101,11 @@ namespace EmployeeManager.Api.Controllers
             existingTask.Title = request.Title;
             existingTask.Description = request.Description;
             existingTask.State = request.State;
+            existingTask.Updated = DateTime.UtcNow;
+            existingTask.effortEstimation = request.effortEstimation;
+            existingTask.priority = request.priority;
+            existingTask.progress = request.progress;
+              
 
             try
             {

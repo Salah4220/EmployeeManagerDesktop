@@ -43,6 +43,12 @@ namespace EmployeeManager.Desktop.ViewModels
         [RelayCommand]
         private async Task SignInAsync()
         {
+            if ((string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password)) || (string.IsNullOrWhiteSpace(ConfirmPassword) || string.IsNullOrWhiteSpace(Role)))
+            {
+                _messageService.ShowMessage("❌ Merci de remplire tout les champs pour continuer.", "Erreur");
+                return;
+            }
+
             if (Password != ConfirmPassword)
             {
                 _messageService.ShowMessage("❌ Les mots de passe ne correspondent pas.", "Erreur");
