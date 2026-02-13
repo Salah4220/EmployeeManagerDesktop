@@ -22,7 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EmployeeManager.Application\EmployeeManager.Application.csproj" />
+    <ProjectReference Include="..\EmployeeManager.Infrastructure\EmployeeManager.Infrastructure.csproj" />
     <ProjectReference Include="..\EmployeeManager.Shared\EmployeeManager.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

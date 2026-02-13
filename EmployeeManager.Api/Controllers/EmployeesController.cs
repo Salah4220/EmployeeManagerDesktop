@@ -9,7 +9,7 @@ namespace EmployeeManager.Api.Controllers
     [Route("api/employees")] 
     public class EmployeesController : ControllerBase
     {
-        private readonly AppDbContext _context;
+     /*   private readonly AppDbContext _context;
 
         public EmployeesController(AppDbContext context)
         {
@@ -83,6 +83,6 @@ namespace EmployeeManager.Api.Controllers
             return NoContent();
         }
 
-
+        */
     }
 }

@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EmployeeManager.Api\EmployeeManager.Api.csproj" />
-    <ProjectReference Include="..\EmployeeManager.Desktop\EmployeeManager.Desktop.csproj" />
     <ProjectReference Include="..\EmployeeManager.Shared\EmployeeManager.Shared.csproj" />
   </ItemGroup>
 
