@@ -15,7 +15,7 @@ namespace EmployeeManager.Api.Controllers
     [Route("api/users")] 
     public class UserController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
+       /* private readonly IConfiguration _configuration;
         public UserController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
@@ -170,6 +170,6 @@ namespace EmployeeManager.Api.Controllers
                 Message = $"Le rôle de {user.UserName} a été mis à jour en '{user.Role}'."
             });
         }
-
+       */
     }
 }

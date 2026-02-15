@@ -1,15 +1,20 @@
 using EmployeeManager.Api;
+using EmployeeManager.Application.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore; // Ajoutez cette ligne
+using Microsoft.EntityFrameworkCore; 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
-using System.Text; // Ajoutez cette ligne
+using System.Text;
+using EmployeeManager.Infrastructure;
+
+
 
 
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 
 // Lire config JWT
@@ -71,8 +76,12 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//   options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<ITaskService, TaskService>();
 
 var app = builder.Build();
 
