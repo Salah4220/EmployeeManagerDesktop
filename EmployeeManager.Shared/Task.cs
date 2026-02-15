@@ -34,6 +34,20 @@ namespace EmployeeManager.Shared
         public int? progress { get; set; }   
         public string? UserName { get; set; }
         public int? UserId { get; set; }
-        public User? User { get; set; }
     }
+
+    public class TaskCreateUpdateDto
+    {
+        public string Title { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public string? State { get; set; }
+        public int? EffortEstimation { get; set; }
+        public int? Priority { get; set; }
+        public int? Progress { get; set; }
+    }
+    public class AssignTaskDto
+    {
+        public int? UserId { get; set; }
+    }
+
 }

@@ -40,22 +40,46 @@ public class TaskService : ITaskService
         };
     }
 
-    public async Task<TaskDto> CreateAsync(TaskDto dto)
+    public async Task<TaskCreateUpdateDto> CreateAsync(TaskCreateUpdateDto dto)
     {
         var task = new EmployeeManager.Shared.Task
         {
             Title = dto.Title,
             Description = dto.Description,
             State = dto.State,
+            effortEstimation = dto.EffortEstimation,
+            priority = dto.Priority,
+            progress = dto.Progress,
+              
             Created = DateTime.UtcNow,
             Updated = DateTime.UtcNow
         };
 
+
+
         await _repository.AddAsync(task);
         await _repository.SaveChangesAsync();
 
-        dto.Id = task.Id;
+       
         return dto;
+    }
+
+    public async Task<bool> UpdateAsync(int id, TaskCreateUpdateDto dto)
+    {
+        var existingTask = await _repository.GetByIdAsync(id);
+        if (existingTask == null)
+            return false;
+
+        existingTask.Title = dto.Title;
+        existingTask.Description = dto.Description;
+        existingTask.State = dto.State;
+        existingTask.Updated = DateTime.UtcNow;
+        existingTask.effortEstimation = dto.EffortEstimation;
+        existingTask.priority = dto.Priority ;
+        existingTask.progress = dto.Progress;
+        await _repository.SaveChangesAsync();
+        return true;
+
     }
 
     public async Task<bool> DeleteAsync(int id)

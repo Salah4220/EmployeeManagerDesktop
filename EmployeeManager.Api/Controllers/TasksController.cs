@@ -3,6 +3,7 @@ using EmployeeManager.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data.Entity;
 using Task = EmployeeManager.Shared.Task;
 
 namespace EmployeeManager.Api.Controllers
@@ -39,11 +40,31 @@ namespace EmployeeManager.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(TaskDto dto)
+        public async Task<IActionResult> Create(TaskCreateUpdateDto dto)
         {
             var createdTask = await _taskService.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = createdTask.Id }, createdTask);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] TaskCreateUpdateDto dto)
+        {
+            if (dto == null)
+                return BadRequest("Task data is required.");
+
+            var updated = await _taskService.UpdateAsync(id, dto);
+
+            if (!updated)
+                return NotFound();
+
+            return NoContent();
+        }
+
+
+
+
+
+
     }
 
 }
