@@ -77,6 +77,26 @@ namespace EmployeeManager.Api.Controllers
 
             return NoContent();
         }
+        [HttpPut("{id}/assign")]
+        public async Task<IActionResult> AssignTaskToUser(int id, [FromBody] AssignTaskDto dto)
+        {
+            var success = await _taskService.AssignTaskToUserAsync(id, dto.UserId);
+            
+            if (!success)
+                return NotFound(new
+                {
+                    Success = false,
+                    Message = "Tâche ou utilisateur introuvable."
+                });
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Tâche assignée avec succès."
+            });
+        }
+
+
 
 
 

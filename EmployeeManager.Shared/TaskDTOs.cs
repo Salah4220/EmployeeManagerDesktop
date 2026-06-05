@@ -34,7 +34,7 @@ namespace EmployeeManager.Shared
     }
     public class AssignTaskDto
     {
-        public int? UserId { get; set; }
+        public int UserId { get; set; }
     }
 
 }

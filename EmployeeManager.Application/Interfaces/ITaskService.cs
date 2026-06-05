@@ -14,5 +14,6 @@ namespace EmployeeManager.Application.Interfaces
         Task<TaskDto> CreateAsync(TaskCreateUpdateDto dto);
         Task<bool> UpdateAsync(int id, TaskCreateUpdateDto dto);
         Task<bool> DeleteAsync(int id);
+        Task<bool> AssignTaskToUserAsync(int taskId, int userId);
     }
 }

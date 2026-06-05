@@ -1,14 +1,17 @@
 ﻿using EmployeeManager.Application.Interfaces;
 using EmployeeManager.Domain.Entities;
+using EmployeeManager.Infrastructure.Repositories;  
 using EmployeeManager.Shared;
 
 public class TaskService : ITaskService
 {
     private readonly ITaskRepository _repository;
+    private readonly IUserRepository _userRepository;
 
-    public TaskService(ITaskRepository repository)
+    public TaskService(ITaskRepository repository, IUserRepository userRepository)
     {
         _repository = repository;
+        _userRepository = userRepository;
     }
 
     public async Task<List<TaskDto>> GetAllAsync()
@@ -106,6 +109,23 @@ public class TaskService : ITaskService
 
         return true;
     }
+    public async Task<bool> AssignTaskToUserAsync(int taskId, int userId)
+    {
+        var task = await _repository.GetByIdAsync(taskId);
+        if (task == null)
+            return false;
 
-  
+        var user = await _userRepository.GetByIdAsync(userId);
+
+        if (user == null)
+            return false;
+
+        task.UserId = userId;
+        task.Updated = DateTime.UtcNow;
+
+        await _repository.SaveChangesAsync();
+
+        return true;
+    }
+
 }
