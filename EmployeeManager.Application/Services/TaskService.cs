@@ -1,4 +1,5 @@
 ﻿using EmployeeManager.Application.Interfaces;
+using EmployeeManager.Domain.Entities;
 using EmployeeManager.Shared;
 
 public class TaskService : ITaskService
@@ -36,13 +37,19 @@ public class TaskService : ITaskService
             Id = task.Id,
             Title = task.Title,
             Description = task.Description,
-            State = task.State
+            State = task.State,
+            Progress = task.progress,
+            Priority = task.priority,
+            Created = task.Created,
+            EffortEstimation = task.effortEstimation,
+            Updated = task.Updated
+            
         };
     }
 
-    public async Task<TaskCreateUpdateDto> CreateAsync(TaskCreateUpdateDto dto)
+    public async Task<TaskDto> CreateAsync(TaskCreateUpdateDto dto)
     {
-        var task = new EmployeeManager.Shared.Task
+        var task = new TaskItem
         {
             Title = dto.Title,
             Description = dto.Description,
@@ -50,18 +57,23 @@ public class TaskService : ITaskService
             effortEstimation = dto.EffortEstimation,
             priority = dto.Priority,
             progress = dto.Progress,
-              
             Created = DateTime.UtcNow,
             Updated = DateTime.UtcNow
         };
 
-
-
         await _repository.AddAsync(task);
         await _repository.SaveChangesAsync();
 
-       
-        return dto;
+        return new TaskDto
+        {
+            Id = task.Id,
+            Title = task.Title,
+            Description = task.Description,
+            State = task.State,
+            EffortEstimation = task.effortEstimation,
+            Priority = task.priority,
+            Progress = task.progress
+        };
     }
 
     public async Task<bool> UpdateAsync(int id, TaskCreateUpdateDto dto)
@@ -94,4 +106,6 @@ public class TaskService : ITaskService
 
         return true;
     }
+
+  
 }

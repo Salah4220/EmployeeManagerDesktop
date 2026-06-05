@@ -1,4 +1,5 @@
-﻿using EmployeeManager.Shared;
+﻿
+using EmployeeManager.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
@@ -8,9 +9,8 @@ namespace EmployeeManager.Infrastructure
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<Employee> Employees { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<EmployeeManager.Shared.Task> Tasks { get; set; }
+        public DbSet<TaskItem> Tasks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,7 +27,7 @@ namespace EmployeeManager.Infrastructure
                       .OnDelete(DeleteBehavior.SetNull);
             });
 
-            modelBuilder.Entity<EmployeeManager.Shared.Task>(entity =>
+            modelBuilder.Entity<TaskItem>(entity =>
             {
                 entity.HasKey(t => t.Id);
                 entity.Property(t => t.Title).IsRequired().HasMaxLength(200);

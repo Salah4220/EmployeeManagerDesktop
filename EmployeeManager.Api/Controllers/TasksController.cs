@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Entity;
-using Task = EmployeeManager.Shared.Task;
+
 
 namespace EmployeeManager.Api.Controllers
 {
@@ -56,6 +56,24 @@ namespace EmployeeManager.Api.Controllers
 
             if (!updated)
                 return NotFound();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTask(int id)
+        {
+            
+
+
+
+
+            var task =  await _taskService.GetByIdAsync(id);
+            if (task == null)
+                return NotFound();
+
+            await _taskService.DeleteAsync(id);
+     
 
             return NoContent();
         }

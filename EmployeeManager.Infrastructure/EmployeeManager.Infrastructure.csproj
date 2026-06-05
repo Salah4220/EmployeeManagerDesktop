@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EmployeeManager.Domain\EmployeeManager.Domain.csproj" />
     <ProjectReference Include="..\EmployeeManager.Shared\EmployeeManager.Shared.csproj" />
   </ItemGroup>
 

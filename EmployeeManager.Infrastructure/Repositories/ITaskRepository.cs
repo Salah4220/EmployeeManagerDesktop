@@ -1,10 +1,11 @@
-﻿using EmployeeManager.Shared;
+﻿
+using EmployeeManager.Domain.Entities;
 
 public interface ITaskRepository
 {
-    Task<List<EmployeeManager.Shared.Task>> GetAllAsync();
-    Task<EmployeeManager.Shared.Task?> GetByIdAsync(int id);
-    System.Threading.Tasks.Task AddAsync(EmployeeManager.Shared.Task task);
-    System.Threading.Tasks.Task DeleteAsync(EmployeeManager.Shared.Task task);
+    Task<List<TaskItem>> GetAllAsync();
+    Task<TaskItem?> GetByIdAsync(int id);
+    System.Threading.Tasks.Task AddAsync(TaskItem task);
+    System.Threading.Tasks.Task DeleteAsync(TaskItem task);
     System.Threading.Tasks.Task SaveChangesAsync();
 }
