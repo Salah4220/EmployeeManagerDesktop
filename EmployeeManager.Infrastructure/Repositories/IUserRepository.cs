@@ -10,8 +10,9 @@ using System.Threading.Tasks;
     {
         Task<User?> GetByIdAsync(int id);
         Task<List<User>> GetAllAsync();
-    
-        Task<bool> DeleteAsync(int id);
-
-    }
+        Task AddAsync(User user);
+        Task DeleteAsync(User user);
+        Task SaveChangesAsync();
+        Task<User?> GetByUserNameAsync(string userName);
+}
 

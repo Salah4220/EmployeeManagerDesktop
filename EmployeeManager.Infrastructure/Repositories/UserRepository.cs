@@ -2,6 +2,7 @@
 using EmployeeManager.Shared;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,18 +24,30 @@ namespace EmployeeManager.Infrastructure.Repositories
         }
   
 
-        public Task<bool> DeleteAsync(int id)
+        public async Task DeleteAsync(User user)
         {
-            throw new NotImplementedException();
+            _context.Users.Remove(user);
         }
 
-        public Task<List<User>> GetAllAsync()
+        public async Task<List<User>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Users.ToListAsync();
         }
 
-     
+        public async Task AddAsync(User user)
+        {
+            await _context.Users.AddAsync(user);
+        }
 
-    
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+        public async Task<User?> GetByUserNameAsync(string userName)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.UserName == userName);
+        }
+
     }
 }
