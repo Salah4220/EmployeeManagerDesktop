@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace EmployeeManager.Shared
 {
-    public class LoginResult
+    public class RegisterResult
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public UserDTO userDto { get; set; }
+
+    }
+        public class LoginResult
     {
         public bool Success { get; set; }
         public string Message { get; set; }

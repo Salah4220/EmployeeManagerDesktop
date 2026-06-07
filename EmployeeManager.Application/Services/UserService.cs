@@ -27,24 +27,46 @@ namespace EmployeeManager.Application.Services
             _userRepository = userRepository;
             _jwtService = jwtService;
         }
-        public async Task<UserDTO> CreateAsync(RegisterDto dto)
+        public async Task<RegisterResult> CreateAsync(UserDTO dto)
         {
-            var user = new User
-            {
-                UserName = dto.UserName,
-                PassWordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Role = dto.Role
-            };
-            
-            await _userRepository.AddAsync(user);
-            await _userRepository.SaveChangesAsync();
+            var userAlreadyInserted = await _userRepository.GetByUserNameAsync(dto.UserName);
 
-            return new UserDTO  
+            if (userAlreadyInserted == null)
             {
-                UserName = user.UserName,
-                Password = user.PassWordHash,
-                Role = user.Role
-            };
+                var user = new User
+                {
+                    UserName = dto.UserName,
+                    PassWordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                    Role = dto.Role
+                };
+
+                await _userRepository.AddAsync(user);
+                await _userRepository.SaveChangesAsync();
+
+                return new RegisterResult
+                {
+                    userDto = new UserDTO
+                    {
+                        Id = user.Id,
+                        UserName = user.UserName,
+                        Password = user.PassWordHash,
+                        Role = user.Role
+                    },
+                    Message = "Utilisateur créé avec succès",
+                    Success = true
+                };
+            }
+            else
+            {
+                return new RegisterResult
+                {
+                    userDto = null,
+                    Message = "Le nom d'utilisateur existe déjà",
+                    Success = false
+                };
+            }
+
+
         }
 
         public async Task<bool> DeleteAsync(int id)
@@ -66,6 +88,7 @@ namespace EmployeeManager.Application.Services
 
             return users.Select(t => new UserDTO
             {
+                Id = t.Id,
                 Password = t.PassWordHash,
                 Role = t.Role,
                 UserName = t.UserName
@@ -135,6 +158,30 @@ namespace EmployeeManager.Application.Services
                 Token = tokenString,
                 Role = user.Role
             };
+        }
+
+        public async Task<bool> UpdateRole(int id, RoleUpdateDto dto)
+        {
+            var existingUser = await _userRepository.GetByIdAsync(id);
+            if (existingUser == null)
+                return false;
+
+            
+            existingUser.Role = dto.Role;
+            await _userRepository.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> UpdatePassword(int id, PasswordUpdateDto dto)
+        {
+            var existingUser = await _userRepository.GetByIdAsync(id);
+            if (existingUser == null)
+                return false;
+
+
+            existingUser.PassWordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+            await _userRepository.SaveChangesAsync();
+            return true;
         }
     }
 }
