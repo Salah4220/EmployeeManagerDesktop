@@ -6,21 +6,26 @@ using System.Threading.Tasks;
 
 namespace EmployeeManager.Shared
 {
-    public class User
+
+    public class UserDTO
     {
         public int Id { get; set; }
         public string UserName { get; set; }
-        public string PassWordHash { get; set; }
+        public string Password { get; set; }
         public string Role { get; set; }
-
-        public  ICollection<Task> Tasks { get; set; } = new List<Task>();
-
-
     }
     public class RegisterDto
     {
         public string UserName { get; set; }
         public string Password { get; set; }
+        public string Role { get; set; }
+    }
+    public class PasswordUpdateDto
+    {
+        public string Password { get; set; }
+    }
+    public class RoleUpdateDto
+    {
         public string Role { get; set; }
     }
 
@@ -30,8 +35,5 @@ namespace EmployeeManager.Shared
         public string Password { get; set; }
     }
 
-    public class UpdateRoleDto
-    {
-        public string Role { get; set; } = string.Empty;
-    }
+  
 }

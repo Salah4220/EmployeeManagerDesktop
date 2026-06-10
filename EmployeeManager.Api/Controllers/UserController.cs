@@ -1,12 +1,8 @@
-﻿using EmployeeManager.Shared;
+﻿using EmployeeManager.Application.Interfaces;
+using EmployeeManager.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace EmployeeManager.Api.Controllers
 {
@@ -15,161 +11,124 @@ namespace EmployeeManager.Api.Controllers
     [Route("api/users")] 
     public class UserController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        public UserController(AppDbContext context, IConfiguration configuration)
+        private readonly IUserService _userService;
+
+        public UserController(IUserService userService)
         {
-            _context = context;
-            _configuration = configuration;
+            _userService = userService;
         }
-        private Util _util = new Util();
-        private readonly AppDbContext _context;
-
-
-        // GET: api/users
         [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await _userService.GetAllAsync();
             return Ok(users);
         }
-
-
-        // POST: api/users/register
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
-        {
-            if (string.IsNullOrWhiteSpace(dto.UserName) || string.IsNullOrWhiteSpace(dto.Password))
-                return BadRequest(new { Success = false, Message = "Invalid user data." });
-
-            if (await _context.Users.AnyAsync(u => u.UserName == dto.UserName))
-                return BadRequest(new { Success = false, Message = "Username already used." });
-
-            string passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-
-            var user = new User
-            {
-                UserName = dto.UserName,
-                PassWordHash = passwordHash,
-                Role = dto.Role
-            };
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            var result = new
-            {
-                Success = true,
-                Message = "Utilisateur créé avec succès"
-            };
-
-            return Ok(result);
-        }
-
-        // GET: api/users/{id}
-        [Authorize(Roles = "admin")]
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var currentUserId = int.Parse(User.FindFirst("userId")!.Value);
+            var currentRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (currentRole != "admin" && currentUserId != id)
+                return Forbid();
+
+            var user = await _userService.GetByIdAsync(id);
+
             if (user == null)
                 return NotFound();
+
             return Ok(user);
         }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> Create(UserDTO dto)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == dto.UserName);
+            var createdUser = await _userService.CreateAsync(dto);
+            if (createdUser.Success) {
+                return CreatedAtAction(nameof(GetById), new { id = createdUser.userDto.Id }, createdUser.userDto);
 
-            if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PassWordHash))
-            {
-                var result2 = new LoginResult
-                {
-                    Success = false,
-                    Message = "Connexion échouée ❌",
-                    Token = null
-                };
-
-                return Unauthorized(result2);
             }
-
-            //  Lire les paramètres JWT depuis la config
-                    var jwtSettings = _configuration.GetSection("Jwt");
-                    var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
-
-                    var claims = new[]
-                    {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("userId", user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
-
-            var creds = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: jwtSettings["Issuer"],
-                audience: jwtSettings["Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["ExpireMinutes"])),
-                signingCredentials: creds
-            );
-
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
-            var result = new LoginResult
+            else
             {
-                Success = true,
-                Message = "Connexion réussie ✅",
-                Token = tokenString
-            };
+                return BadRequest(createdUser.Message);
 
-            return Ok(result);
+            }
         }
 
-        // DELETE: api/users/{id}
         [Authorize(Roles = "admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] RegisterDto dto)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-                return NotFound();
+            if (dto == null)
+                return BadRequest("User data is required.");
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            var updated = await _userService.UpdateAsync(id, dto);
+
+            if (!updated)
+                return NotFound();
 
             return NoContent();
         }
+        [Authorize(Roles = "admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
 
-        // ✅ Mise à jour du rôle d’un utilisateur
+            var user = await _userService.GetByIdAsync(id);
+            if (user == null)
+                return NotFound();
+
+            await _userService.DeleteAsync(id);
+
+
+            return NoContent();
+        }
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        {
+            var result = await _userService.LoginAsync(dto);
+
+            if (!result.Success)
+                return Unauthorized(result);
+
+            return Ok(result);
+        }
+        [Authorize]
+        [HttpPut("{id}/password")]
+        public async Task<IActionResult> UpdatePassword(int id, [FromBody] PasswordUpdateDto dto)
+           {
+            if (dto == null)
+                return BadRequest("User data is required.");
+            var userId = int.Parse(User.FindFirst("userId")!.Value);
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (userId != id && userRole != "admin")
+                return Forbid("You can only update your own password.");
+
+            var updated = await _userService.UpdatePassword(id, dto);
+
+               if (!updated)
+                   return NotFound();
+
+               return NoContent();
+           }
         [Authorize(Roles = "admin")]
         [HttpPut("{id}/role")]
-        public async Task<IActionResult> UpdateUserRole(int id, [FromBody] UpdateRoleDto dto)
+        public async Task<IActionResult> UpdateRole(int id, [FromBody] RoleUpdateDto dto)
         {
-            if (string.IsNullOrWhiteSpace(dto.Role))
-                return BadRequest(new { Success = false, Message = "Le rôle ne peut pas être vide." });
+            if (dto == null)
+                return BadRequest("User data is required.");
 
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-                return NotFound(new { Success = false, Message = "Utilisateur non trouvé." });
+            var updated = await _userService.UpdateRole(id, dto);
 
-            // Vérifie que le rôle est valide
-            if (dto.Role != "admin" && dto.Role != "user")
-                return BadRequest(new { Success = false, Message = "Rôle invalide. Valeurs possibles : 'admin' ou 'user'." });
+            if (!updated)
+                return NotFound();
 
-            // Mise à jour du rôle
-            user.Role = dto.Role;
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync();
-
-            return Ok(new
-            {
-                Success = true,
-                Message = $"Le rôle de {user.UserName} a été mis à jour en '{user.Role}'."
-            });
+            return NoContent();
         }
-
+       
     }
 }
